@@ -171,7 +171,6 @@ void atacar_con_unidad(Contexto& ctx) {
         return;
     }
 
-    // Atacar UNIDAD o EDIFICIO
     if (celda_objetivo.tiene_unidad()) {
         auto objetivo = celda_objetivo.obtener_unidad();
 
@@ -182,11 +181,9 @@ void atacar_con_unidad(Contexto& ctx) {
             return;
         }
 
-        // APLICAR BONO DE DEFENSA DEL TERRENO
         int dano_base = atacante->calcular_dano_ataque();
         int bono_def = celda_objetivo.obtener_terreno()->bono_defensa(*objetivo);
 
-        // APLICAR MODIFICADOR DE MORAL
         int moral = ctx.obtener_jugador().obtener_moral();
         double factor_moral = 0.5 + (moral / 200.0); // Rango: 0.5 a 1.0
 
