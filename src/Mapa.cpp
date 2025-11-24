@@ -1,6 +1,7 @@
 //
 // Created by tadeo on 23/11/2025.
 //
+
 #include "Mapa.h"
 #include "Terreno.h"
 #include <iomanip>

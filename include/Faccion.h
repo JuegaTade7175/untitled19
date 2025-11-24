@@ -6,7 +6,6 @@
 #define UNTITLED19_FACCION_H
 #ifndef FACCION_H
 #define FACCION_H
-
 #include "Recursos.h"
 #include "Coordenada.h"
 #include <string>
@@ -29,6 +28,9 @@ public:
     Recursos& obtener_recursos() { return recursos; }
     const Recursos& obtener_recursos() const { return recursos; }
     int obtener_moral() const { return moral; }
+    double obtener_factor_moral() const {
+        return 1.0 + (moral - 50) / 100.0;
+    }
 
     void agregar_recursos(const Recursos& rec) {
         recursos += rec;
@@ -44,6 +46,12 @@ public:
 
     void modificar_moral(int delta) {
         moral += delta;
+        if (moral < 0) moral = 0;
+        if (moral > 100) moral = 100;
+    }
+
+    void establecer_moral(int valor) {
+        moral = valor;
         if (moral < 0) moral = 0;
         if (moral > 100) moral = 100;
     }
@@ -65,6 +73,5 @@ public:
         return contar_territorios() > otra.contar_territorios();
     }
 };
-
 #endif
 #endif //UNTITLED19_FACCION_H
