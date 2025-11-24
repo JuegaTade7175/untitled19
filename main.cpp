@@ -143,7 +143,6 @@ void atacar_con_unidad(Contexto& ctx) {
         return;
     }
 
-    // Validar adyacencia ORTOGONAL
     int dif_f = abs(pos_objetivo.fila - pos_atacante.fila);
     int dif_c = abs(pos_objetivo.columna - pos_atacante.columna);
 
