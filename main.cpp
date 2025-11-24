@@ -8,7 +8,6 @@
 
 using namespace std;
 
-// Controladores globales para demostrar POO
 ControladorJugador ctrl_jugador;
 ControladorSistema ctrl_sistema;
 
