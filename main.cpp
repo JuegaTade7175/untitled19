@@ -97,7 +97,6 @@ void mover_unidad(Contexto& ctx) {
         return;
     }
 
-    // Validar movimiento ortogonal
     int dif_f = abs(destino.fila - origen.fila);
     int dif_c = abs(destino.columna - origen.columna);
 
