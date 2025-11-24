@@ -217,7 +217,6 @@ void atacar_con_unidad(Contexto& ctx) {
             return;
         }
 
-        // Edificios se destruyen directamente
         celda_objetivo.eliminar_edificio();
         ctx.agregar_puntaje(25);
         ctx.agregar_log("¡Edificio enemigo destruido! +25 puntos");
@@ -254,7 +253,6 @@ void construir_edificio(Contexto& ctx) {
 
     Celda& celda = ctx.obtener_mapa().obtener_celda(pos);
 
-    // VALIDAR QUE ESTÉ LIBRE (ni unidad ni edificio)
     if (celda.tiene_unidad()) {
         cout << "¡Hay una unidad en esa casilla! Debes desocuparla primero." << endl;
         return;
@@ -265,7 +263,6 @@ void construir_edificio(Contexto& ctx) {
         return;
     }
 
-    // VALIDAR TERRENO (no construir en agua)
     if (celda.obtener_terreno()->obtener_codigo() == "AG") {
         cout << "¡No se puede construir en agua!" << endl;
         return;
@@ -344,7 +341,6 @@ void reclutar_unidad(Contexto& ctx) {
         return;
     }
 
-    // VALIDAR QUE SEA TUYO
     if (celda.obtener_edificio()->obtener_propietario() != "J1") {
         cout << "¡Ese cuartel no es tuyo!" << endl;
         return;
@@ -513,7 +509,6 @@ int main() {
     bool jugando = true;
 
     while (jugando) {
-        // USAR CONTROLADOR JUGADOR
         ctrl_jugador.resolver_fase(ctx);
 
         ctx.mostrar_panel_superior();
@@ -552,10 +547,8 @@ int main() {
                 cout << "Moral: " << ctx.obtener_jugador().obtener_moral() << endl;
                 break;
             case 8:
-                // Finalizar turno
                 ctx.mostrar_bitacora();
 
-                // GUARDAR LOG A ARCHIVO
             {
                 ofstream log_file("partida_completa.log", ios::app);
                 log_file << "=== TURNO " << ctx.obtener_turno() << " ===\n";
@@ -569,13 +562,11 @@ int main() {
                 mantenimiento_unidades(ctx);
                 producir_recursos(ctx);
 
-                // USAR CONTROLADOR SISTEMA
                 ctrl_sistema.resolver_fase(ctx);
 
                 ctx.incrementar_turno();
                 ctx.reiniciar_puntos_accion();
 
-                // VERIFICAR MISIÓN
                 ctx.verificar_mision();
 
                 ctx.limpiar_bitacora();
@@ -591,7 +582,7 @@ int main() {
                     jugando = false;
                 }
                 break;
-            case 9: // Guardar
+            case 9:
             {
                 ofstream archivo("partida.txt");
                 archivo << "Turno: " << ctx.obtener_turno() << "\n";
@@ -601,11 +592,10 @@ int main() {
                 cout << "¡Partida guardada!" << endl;
             }
                 break;
-            case 10: // Cargar
+            case 10:
             {
                 ifstream archivo("partida.txt");
                 if (archivo.is_open()) {
-                    // Implementación básica
                     cout << "Funcionalidad de carga en desarrollo" << endl;
                     archivo.close();
                 } else {
