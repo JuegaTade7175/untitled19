@@ -293,7 +293,7 @@ void Contexto::generar_reporte_final(const string& archivo) {
 
     ofstream out(archivo);
 
-    out << "======================== RIVAL FRONTIERS - REPORTE FINAL ========================\n";
+    out << "=================== RIVAL FRONTIERS - REPORTE FINAL ===================\n";
     out << "Resultado: " << (verificar_victoria() ? "Victoria" : "Derrota") << "\n";
     out << "Turno final: " << turno_actual << "/" << turno_limite << "\n";
     out << "Dominio jugador: " << calcular_dominio_jugador() << "%\n";
