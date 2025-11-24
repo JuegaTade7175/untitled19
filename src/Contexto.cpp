@@ -286,26 +286,18 @@ void Contexto::generar_reporte_final(const string& archivo) {
 
     ofstream out(archivo);
 
-    out << "============================================================\n";
-    out << " RIVAL FRONTIERS - REPORTE FINAL\n";
-    out << "============================================================\n\n";
-
+    out << "======================== RIVAL FRONTIERS - REPORTE FINAL ========================\n";
     out << "Resultado: " << (verificar_victoria() ? "Victoria" : "Derrota") << "\n";
     out << "Turno final: " << turno_actual << "/" << turno_limite << "\n";
     out << "Dominio jugador: " << calcular_dominio_jugador() << "%\n";
     out << "Dominio sistema: " << calcular_dominio_sistema() << "%\n";
-    out << "Neutrales: " << calcular_neutrales() << "%\n\n";
-
+    out << "Neutrales: " << calcular_neutrales() << "%\n";
     out << "Recursos finales: " << jugador.obtener_recursos() << "\n";
     out << "Moral final: " << jugador.obtener_moral() << "\n";
-    out << "Puntaje total: " << puntaje_jugador << "\n\n";
-
+    out << "Puntaje total: " << puntaje_jugador << "\n";
     out << "Misión: " << (mision_cumplida ? "Completada" : "No completada") << "\n";
-    out << "Clima final: " << clima_actual << "\n\n";
-
-    out << "============================================================\n";
-    out << " HISTORIAL DE ACCIONES\n";
-    out << "============================================================\n";
+    out << "Clima final: " << clima_actual << "\n";
+    out << "======================== HISTORIAL DE ACCIONES ========================\n";
 
     for (const auto& log : bitacora) {
         out << log << "\n";
