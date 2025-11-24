@@ -245,20 +245,22 @@ void Contexto::mostrar_panel_superior() const {
     cout << "════════════════════════════════════════════════════════════\n";
 }
 
+
 bool Contexto::guardar_partida(const string& archivo) {
 
     ofstream file(archivo);
     if (!file.is_open()) return false;
 
-    file << turno_actual << "\n";
-    file << puntaje_jugador << "\n";
+    file << "Turno: " << turno_actual << "\n";
+    file << "Puntaje: " << puntaje_jugador << "\n";
 
-    file << jugador.obtener_recursos().comida << " "
+    file << "Recursos: "
+         << jugador.obtener_recursos().comida << " "
          << jugador.obtener_recursos().metal << " "
          << jugador.obtener_recursos().energia << "\n";
 
-    file << jugador.obtener_moral() << "\n";
-    file << mision_cumplida << "\n";
+    file << "Moral: " << jugador.obtener_moral() << "\n";
+    file << "Mision_cumplida: " << mision_cumplida << "\n";
 
     return true;
 }
@@ -268,13 +270,18 @@ bool Contexto::cargar_partida(const string& archivo) {
     ifstream file(archivo);
     if (!file.is_open()) return false;
 
+    string etiqueta;
     int comida, metal, energia, moral;
 
-    file >> turno_actual >> puntaje_jugador;
-    file >> comida >> metal >> energia >> moral;
-    file >> mision_cumplida;
+    file >> etiqueta >> turno_actual;
+    file >> etiqueta >> puntaje_jugador;
 
-    jugador.obtener_recursos() = Recursos(comida, metal, energia);
+    file >> etiqueta >> comida >> metal >> energia;
+
+    file >> etiqueta >> moral;
+    file >> etiqueta >> mision_cumplida;
+
+    jugador.establecer_recursos(Recursos(comida, metal, energia));
     jugador.establecer_moral(moral);
 
     agregar_log("Partida cargada desde " + archivo);

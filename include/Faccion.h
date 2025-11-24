@@ -27,6 +27,9 @@ public:
     std::string obtener_id() const { return id; }
     Recursos& obtener_recursos() { return recursos; }
     const Recursos& obtener_recursos() const { return recursos; }
+    void establecer_recursos(const Recursos& r) {
+        recursos = r;
+    }
     int obtener_moral() const { return moral; }
     double obtener_factor_moral() const {
         return 1.0 + (moral - 50) / 100.0;
