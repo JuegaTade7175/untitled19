@@ -4,7 +4,6 @@
 
 #ifndef UNTITLED19_RECURSOS_H
 #define UNTITLED19_RECURSOS_H
-#include <iostream>
 
 class Recursos {
 public:
