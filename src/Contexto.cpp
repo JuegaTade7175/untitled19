@@ -354,15 +354,24 @@ void Contexto::generar_reporte_final(const string& archivo) {
         if (mision_cumplida) {
             out << "Victoria por misión completada.\n";
         } else if (calcular_dominio_jugador() >= objetivo_dominio) {
-            out << "Victoria por dominio territorial (" << calcular_dominio_jugador() << "% >= " << objetivo_dominio << "%).\n";
+            out << "Victoria por dominio territorial ("
+                << calcular_dominio_jugador() << "% >= "
+                << objetivo_dominio << "%).\n";
         }
     } else {
         if (turno_actual >= turno_limite) {
             out << "Derrota por límite de turnos alcanzado sin cumplir objetivos.\n";
-        } else if (jugador.obtener_recursos().comida < -10) {
-            out << "Derrota por colapso económico (comida: " << jugador.obtener_recursos().comida << ").\n";
-        } else if (calcular_dominio_sistema() >= 70) {
-            out << "Derrota por superioridad territorial enemiga (" << calcular_dominio_sistema() << "%).\n";
+        }
+        else if (jugador.obtener_recursos().comida < -10) {
+            out << "Derrota por colapso económico (comida: "
+                << jugador.obtener_recursos().comida << ").\n";
+        }
+        else if (calcular_dominio_sistema() >= 70) {
+            out << "Derrota por superioridad territorial enemiga ("
+                << calcular_dominio_sistema() << "%).\n";
+        }
+        else {
+            out << "Derrota por no haber cumplido las condiciones de victoria.\n";
         }
     }
 
