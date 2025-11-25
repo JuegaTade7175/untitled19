@@ -8,8 +8,10 @@
 #include "Celda.h"
 #include "Unidad.h"
 #include "Evento.h"
+#include "Edificio.h"
 #include <iostream>
 #include <vector>
+#include <memory>
 
 using namespace std;
 
@@ -129,9 +131,46 @@ void ControladorSistema::ejecutar_defensa(Contexto& ctx) {
     }
 }
 
+void ControladorSistema::generar_guardianes_automaticos(Contexto& ctx) {
+    if (ctx.obtener_turno() % 3 != 0) {
+        return;
+    }
+
+    Mapa& mapa = ctx.obtener_mapa();
+    int generados = 0;
+    const int MAX_GENERACIONES = 1;
+
+    for (int f = 0; f < mapa.obtener_filas() && generados < MAX_GENERACIONES; f++) {
+        for (int c = 0; c < mapa.obtener_columnas() && generados < MAX_GENERACIONES; c++) {
+            Coordenada pos(f, c);
+            Celda& celda = mapa.obtener_celda(pos);
+
+            if (celda.tiene_edificio() &&
+                celda.obtener_edificio()->obtener_tipo() == "Cu" &&
+                celda.obtener_edificio()->obtener_propietario() == "J2" &&
+                !celda.tiene_unidad()) {
+
+                auto nuevo_guardian = make_shared<Soldado>("J2");
+                nuevo_guardian->establecer_posicion(pos);
+                celda.colocar_unidad(nuevo_guardian);
+                generados++;
+
+                ctx.agregar_log("Sistema: Guardián generado automáticamente en cuartel (" +
+                               to_string(f) + "," + to_string(c) + ")");
+            }
+        }
+    }
+
+    if (generados > 0) {
+        cout << "[SISTEMA] " << generados << " guardianes generados automáticamente" << endl;
+    }
+}
+
 void ControladorSistema::resolver_fase(Contexto& ctx) {
     cout << "\n=== FASE DEL SISTEMA ===" << endl;
     ctx.agregar_log("Fase del sistema iniciada");
+
+    generar_guardianes_automaticos(ctx);
 
     ejecutar_ofensiva(ctx);
     ejecutar_patrullaje(ctx);

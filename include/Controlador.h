@@ -36,6 +36,7 @@ class ControladorSistema : public Controlador {
     void ejecutar_patrullaje(Contexto& ctx);
     void ejecutar_ofensiva(Contexto& ctx);
     void ejecutar_defensa(Contexto& ctx);
+    void generar_guardianes_automaticos(Contexto& ctx);
 
 public:
     ControladorSistema() : Controlador("Sistema") {}

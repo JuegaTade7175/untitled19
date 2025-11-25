@@ -95,11 +95,51 @@ void Mago::atacar(Unidad& objetivo, Contexto& ctx) {
 }
 
 void Mago::habilidad_especial(Contexto& ctx) {
-    if (ctx.obtener_jugador().puede_pagar(Recursos(0, 0, 2))) {
-        ctx.obtener_jugador().consumir_recursos(Recursos(0, 0, 2));
-        ctx.agregar_log("Mago lanzó hechizo de área (daña múltiples enemigos)");
-    } else {
+    if (!ctx.obtener_jugador().puede_pagar(Recursos(0, 0, 2))) {
         ctx.agregar_log("Sin energía para hechizo");
+        return;
+    }
+
+    ctx.obtener_jugador().consumir_recursos(Recursos(0, 0, 2));
+
+    Mapa& mapa = ctx.obtener_mapa();
+    int enemigos_danados = 0;
+    int dano_area = 15;
+
+    for (int df = -1; df <= 1; df++) {
+        for (int dc = -1; dc <= 1; dc++) {
+            Coordenada pos_area(posicion.fila + df, posicion.columna + dc);
+
+            if (mapa.es_valida(pos_area)) {
+                Celda& celda = mapa.obtener_celda(pos_area);
+
+                if (celda.tiene_unidad()) {
+                    auto unidad = celda.obtener_unidad();
+
+                    if (unidad->obtener_propietario() != propietario) {
+                        unidad->recibir_dano(dano_area);
+                        enemigos_danados++;
+
+                        ctx.agregar_log("Hechizo de área golpeó a " +
+                                       unidad->obtener_codigo() +
+                                       " causando " + std::to_string(dano_area) + " de daño");
+
+                        if (!unidad->esta_activa()) {
+                            celda.eliminar_unidad();
+                            ctx.agregar_puntaje(10);
+                            ctx.agregar_log("Unidad enemiga eliminada por hechizo (+10 puntos)");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (enemigos_danados > 0) {
+        ctx.agregar_log("Mago lanzó hechizo de área (" +
+                       std::to_string(enemigos_danados) + " enemigos afectados)");
+    } else {
+        ctx.agregar_log("Mago lanzó hechizo de área (sin enemigos en rango)");
     }
 }
 
