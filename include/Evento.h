@@ -29,6 +29,28 @@ public:
     }
 };
 
+class EventoMercado : public Evento {
+    std::string recurso;
+    int cantidad;
+    int precio;
+
+public:
+    EventoMercado(int turno, const std::string& rec, int cant, int prec)
+        : Evento("Mercado", turno), recurso(rec), cantidad(cant), precio(prec) {}
+
+    void ejecutar(Contexto& ctx) override;
+};
+
+class EventoSabotaje : public Evento {
+    std::string objetivo;
+
+public:
+    EventoSabotaje(int turno, const std::string& obj)
+        : Evento("Sabotaje", turno), objetivo(obj) {}
+
+    void ejecutar(Contexto& ctx) override;
+};
+
 class EventoRefuerzo : public Evento {
     std::string faccion;
     std::string tipo_unidad;

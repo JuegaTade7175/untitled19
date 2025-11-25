@@ -52,3 +52,43 @@ void EventoClima::ejecutar(Contexto& ctx) {
         std::cout << "¡Clima favorable! Moral aumentada" << std::endl;
     }
 }
+
+void EventoMercado::ejecutar(Contexto& ctx) {
+    ctx.agregar_log("Evento de mercado: Oferta especial de " +
+                   std::to_string(cantidad) + " " + recurso + " por " +
+                   std::to_string(precio) + " recursos");
+
+    Recursos costo(0, 0, 0);
+    Recursos ganancia(0, 0, 0);
+
+    if (recurso == "comida") {
+        costo = Recursos(0, precio, 0);
+        ganancia = Recursos(cantidad, 0, 0);
+    } else if (recurso == "metal") {
+        costo = Recursos(precio, 0, 0);
+        ganancia = Recursos(0, cantidad, 0);
+    } else if (recurso == "energia") {
+        costo = Recursos(0, 0, precio);
+        ganancia = Recursos(0, 0, cantidad);
+    }
+
+    if (ctx.obtener_jugador().puede_pagar(costo)) {
+        ctx.obtener_jugador().consumir_recursos(costo);
+        ctx.obtener_jugador().agregar_recursos(ganancia);
+        std::cout << "¡Compra exitosa! Has obtenido " << cantidad << " " << recurso << std::endl;
+    } else {
+        std::cout << "No tienes recursos suficientes para la oferta del mercado." << std::endl;
+    }
+}
+
+void EventoSabotaje::ejecutar(Contexto& ctx) {
+    ctx.agregar_log("Evento de sabotaje: " + objetivo + " afectado");
+
+    if (objetivo == "comida") {
+        ctx.obtener_jugador().consumir_recursos(Recursos(5, 0, 0));
+        std::cout << "¡Sabotaje! Has perdido 5 unidades de comida." << std::endl;
+    } else if (objetivo == "energia") {
+        ctx.obtener_jugador().consumir_recursos(Recursos(0, 0, 3));
+        std::cout << "¡Sabotaje! Has perdido 3 unidades de energía." << std::endl;
+    }
+}

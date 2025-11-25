@@ -19,6 +19,23 @@ protected:
     int moral;
 
 public:
+    void aplicar_evento_moral(const std::string& evento) {
+        if (evento == "Victoria") modificar_moral(10);
+        else if (evento == "Derrota") modificar_moral(-15);
+        else if (evento == "EdificioPerdido") modificar_moral(-5);
+        else if (evento == "EdificioCapturado") modificar_moral(5);
+        else if (evento == "UnidadEliminada") modificar_moral(-3);
+        else if (evento == "HabilidadUsada") modificar_moral(2);
+    }
+
+    double obtener_factor_eficiencia() const {
+        if (moral >= 80) return 1.2;
+        else if (moral >= 60) return 1.1;
+        else if (moral >= 40) return 1.0;
+        else if (moral >= 20) return 0.8;
+        else return 0.6;
+    }
+
     Faccion(const std::string& identificador, const Recursos& rec_iniciales)
         : id(identificador), recursos(rec_iniciales), moral(100) {}
 

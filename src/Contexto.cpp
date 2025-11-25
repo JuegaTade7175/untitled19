@@ -74,6 +74,10 @@ void Contexto::inicializar_escenario() {
     agregar_evento(make_shared<EventoRefuerzo>(5, "J2", "A", 1));
     agregar_evento(make_shared<EventoClima>(4, "Tormenta"));
     agregar_evento(make_shared<EventoClima>(7, "Clima despejado"));
+    agregar_evento(make_shared<EventoMercado>(2, "metal", 5, 2));
+    agregar_evento(make_shared<EventoSabotaje>(6, "comida"));
+    agregar_evento(make_shared<EventoRefuerzo>(8, "J2", "A", 2));
+    agregar_evento(make_shared<EventoClima>(10, "Niebla"));
 
     agregar_log("Eventos programados cargados");
 }
@@ -346,6 +350,37 @@ bool Contexto::cargar_partida(const string& archivo) {
 
     agregar_log("Partida cargada desde " + archivo);
     return true;
+}
+
+void Contexto::generar_mision_aleatoria() {
+    if (turno_actual % 3 == 0 && !tiene_mision_secundaria()) {
+        std::vector<std::string> misiones = {
+            "Defender la granja en (1,3) por 3 turnos",
+            "Eliminar 2 unidades enemigas en un turno",
+            "Construir 2 torres en este turno",
+            "Capturar un edificio neutral"
+        };
+
+        std::vector<int> recompensas = {30, 40, 25, 35};
+
+        int idx = rand() % misiones.size();
+        mision_secundaria = misiones[idx];
+        recompensa_mision = recompensas[idx];
+        turnos_restantes_mision = 3;
+
+        agregar_log("MISIÓN SECUNDARIA: " + mision_secundaria + " - Recompensa: " +
+                   std::to_string(recompensa_mision) + " puntos");
+    }
+}
+
+void Contexto::completar_mision_secundaria(const std::string& tipo) {
+    if (tiene_mision_secundaria()) {
+        agregar_puntaje(recompensa_mision);
+        agregar_log("Misión secundaria completada! +" +
+                   std::to_string(recompensa_mision) + " puntos");
+        mision_secundaria = "";
+        recompensa_mision = 0;
+    }
 }
 
 void Contexto::generar_reporte_final(const string& archivo) {

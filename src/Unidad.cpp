@@ -12,7 +12,12 @@ bool Soldado::mover(const Coordenada& destino, Contexto& ctx) {
     int costo = celda_destino.obtener_terreno()->costo_movimiento(*this);
 
     if (costo >= 99) {
+        ctx.agregar_log("Movimiento bloqueado: terreno infranqueable");
         return false;
+    }
+
+    if (costo > 1) {
+        ctx.agregar_log("Soldado se mueve lentamente por terreno difícil");
     }
 
     return true;
@@ -75,7 +80,8 @@ bool Caballero::mover(const Coordenada& destino, Contexto& ctx) {
     Celda& celda_destino = ctx.obtener_mapa().obtener_celda(destino);
     int costo = celda_destino.obtener_terreno()->costo_movimiento(*this);
 
-    if (costo >= 3) {
+    if (costo >= 3 || costo >= 99) {
+        ctx.agregar_log("Caballero no puede atravesar este terreno");
         return false;
     }
 

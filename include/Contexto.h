@@ -17,6 +17,10 @@ class Contexto {
     Faccion jugador;
     Faccion sistema;
 
+    std::string mision_secundaria;
+    int recompensa_mision;
+    int turnos_restantes_mision;
+
     int turno_actual;
     int puntos_accion;
     int puntos_accion_maximos;
@@ -39,6 +43,12 @@ class Contexto {
     std::string clima_actual;
 
 public:
+    void generar_mision_aleatoria();
+    void completar_mision_secundaria(const std::string& tipo);
+    bool tiene_mision_secundaria() const { return !mision_secundaria.empty(); }
+    std::string obtener_mision_secundaria() const { return mision_secundaria; }
+    int obtener_recompensa_mision() const { return recompensa_mision; }
+
     Contexto(int filas = 12, int columnas = 12);
 
     Mapa& obtener_mapa() { return mapa; }

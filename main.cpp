@@ -175,7 +175,6 @@ void atacar_con_unidad(Contexto& ctx) {
     int dif_c = abs(pos_objetivo.columna - pos_atacante.columna);
     int rango = atacante->obtener_rango_ataque();
 
-    // Validación: solo ataques ortogonales (no diagonales) y dentro del rango
     if (!((dif_f == 0 && dif_c > 0 && dif_c <= rango) ||
           (dif_c == 0 && dif_f > 0 && dif_f <= rango))) {
         cout << "Solo se permiten ataques ortogonales dentro del rango!" << endl;
@@ -206,7 +205,11 @@ void atacar_con_unidad(Contexto& ctx) {
         }
 
         int def_base = objetivo->calcular_defensa();
-        int bono_def = celda_objetivo.obtener_terreno()->bono_defensa(*objetivo);
+
+        int bono_def = 0;
+        if (celda_objetivo.obtener_terreno() != nullptr) {
+            bono_def = celda_objetivo.obtener_terreno()->bono_defensa(*objetivo);
+        }
 
         if (ctx.tiene_mejora_defensa()) {
             def_base += 3;
@@ -222,11 +225,15 @@ void atacar_con_unidad(Contexto& ctx) {
 
         objetivo->recibir_dano(dano_final);
 
-        ctx.agregar_log("Unidad " + atacante->obtener_codigo() + " ataco a " +
-                       objetivo->obtener_codigo() + " causando " + to_string(dano_final) +
-                       " de dano (Base: " + to_string(dano_base) +
-                       " | Moral: x" + to_string(factor_moral) +
-                       " | Def total: -" + to_string(defensa_total) + ")");
+        ctx.agregar_log(
+            "Unidad " + atacante->obtener_codigo() + " atacó a " +
+            objetivo->obtener_codigo() + " causando " + to_string(dano_final) +
+            " de daño (Base: " + to_string(dano_base) +
+            " | Moral: x" + to_string(factor_moral) +
+            " | Def total: -" + to_string(defensa_total) +
+            " | Terreno: " + celda_objetivo.obtener_terreno()->obtener_codigo() +
+            " | Bono def: " + to_string(bono_def) + ")"
+        );
 
         if (!objetivo->esta_activa()) {
             celda_objetivo.eliminar_unidad();
@@ -234,10 +241,14 @@ void atacar_con_unidad(Contexto& ctx) {
             ctx.agregar_log("Unidad enemiga eliminada! +10 puntos");
             cout << "Enemigo eliminado! +10 puntos" << endl;
         } else {
-            cout << "Dano causado: " << dano_final << " | Vida restante: " << objetivo->obtener_vida() << endl;
+            cout << "Dano causado: " << dano_final
+                 << " | Vida restante: " << objetivo->obtener_vida() << endl;
         }
 
-    } else if (celda_objetivo.tiene_edificio()) {
+        return;
+    }
+
+    if (celda_objetivo.tiene_edificio()) {
         auto edificio = celda_objetivo.obtener_edificio();
 
         if (edificio->obtener_propietario() == "J1") {
@@ -252,11 +263,12 @@ void atacar_con_unidad(Contexto& ctx) {
         ctx.agregar_log("Edificio enemigo destruido! +25 puntos");
         cout << "Edificio enemigo destruido! +25 puntos" << endl;
 
-    } else {
-        cout << "No hay objetivo valido en esa casilla!" << endl;
-        ctx.reiniciar_puntos_accion();
-        ctx.consumir_punto_accion();
+        return;
     }
+
+    cout << "No hay objetivo valido en esa casilla!" << endl;
+    ctx.reiniciar_puntos_accion();
+    ctx.consumir_punto_accion();
 }
 
 void construir_edificio(Contexto& ctx) {
@@ -776,6 +788,25 @@ void resetear_habilidades_unidades(Contexto& ctx) {
         }
     }
 }
+// Check for secondary mission completion
+void verificar_misiones_secundarias(Contexto& ctx) {
+    if (!ctx.tiene_mision_secundaria()) {
+        ctx.generar_mision_aleatoria();
+        return;
+    }
+
+    std::string mision_actual = ctx.obtener_mision_secundaria();
+
+    // Simple mission checking logic - expand based on mission types
+    if (mision_actual.find("Defender") != std::string::npos) {
+        // Check if specified building is still under player control
+        Celda& celda = ctx.obtener_mapa().obtener_celda(Coordenada(1, 3));
+        if (celda.tiene_edificio() && celda.obtener_edificio()->obtener_propietario() == "J1") {
+            ctx.completar_mision_secundaria("Defender");
+        }
+    }
+    // Add more mission type checks here
+}
 int main() {
 Contexto ctx;
 ctx.inicializar_escenario();
@@ -815,15 +846,26 @@ while (jugando) {
             ctx.obtener_mapa().mostrar();
             break;
         case 7:
-            cout << "\n=== ESTADISTICAS ===" << endl;
+            cout << "\n=== ESTADISTICAS AVANZADAS ===" << endl;
             cout << "Turno: " << ctx.obtener_turno() << endl;
             cout << "Puntaje: " << ctx.obtener_puntaje() << endl;
             cout << "Dominio Jugador: " << ctx.calcular_dominio_jugador() << "%" << endl;
             cout << "Dominio Sistema: " << ctx.calcular_dominio_sistema() << "%" << endl;
-            cout << "Moral: " << ctx.obtener_jugador().obtener_moral() << endl;
+            cout << "Moral: " << ctx.obtener_jugador().obtener_moral() << "/100" << endl;
+            cout << "Factor Eficiencia: x" << ctx.obtener_jugador().obtener_factor_eficiencia() << endl;
             cout << "Clima: " << ctx.obtener_clima() << endl;
             cout << "Recursos: " << ctx.obtener_jugador().obtener_recursos() << endl;
             cout << "Territorios controlados: " << ctx.obtener_jugador().contar_territorios() << endl;
+
+            if (ctx.tiene_mision_secundaria()) {
+                cout << "Misión Secundaria: " << ctx.obtener_mision_secundaria() << endl;
+                cout << "Recompensa: " << ctx.obtener_recompensa_mision() << " puntos" << endl;
+            }
+            else {
+                cout << "No hay misión secundaria activa." << endl;
+                cout << "No hay ninguna recompensa ganada." << endl;
+            }
+
             cout << "Mejoras desbloqueadas:" << endl;
             cout << "  - Ataque: " << (ctx.tiene_mejora_ataque() ? "SI" : "NO") << endl;
             cout << "  - Defensa: " << (ctx.tiene_mejora_defensa() ? "SI" : "NO") << endl;
