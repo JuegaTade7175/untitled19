@@ -893,6 +893,8 @@ while (jugando) {
 if (!jugando) {
     ctx.generar_reporte_final("reporte_final.txt");
     cout << "\nReporte final guardado en 'reporte_final.txt'" << endl;
+    cout << "\nRegistro guardado en partida_completa.log" << endl;
+    cout << "\nRevisión para carga en partida.txt" << endl;
 }
 
 return 0;

@@ -304,9 +304,4 @@ void Contexto::generar_reporte_final(const string& archivo) {
     out << "Puntaje total: " << puntaje_jugador << "\n";
     out << "Misión: " << (mision_cumplida ? "Completada" : "No completada") << "\n";
     out << "Clima final: " << clima_actual << "\n";
-    out << "======================== HISTORIAL DE ACCIONES ========================\n";
-
-    for (const auto& log : bitacora) {
-        out << log << "\n";
-    }
 }
