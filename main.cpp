@@ -174,10 +174,11 @@ void atacar_con_unidad(Contexto& ctx) {
     int dif_f = abs(pos_objetivo.fila - pos_atacante.fila);
     int dif_c = abs(pos_objetivo.columna - pos_atacante.columna);
     int rango = atacante->obtener_rango_ataque();
-    int distancia = dif_f + dif_c;
 
-    if (distancia > rango) {
-        cout << "El objetivo esta fuera del rango de ataque (rango: " << rango << ")!" << endl;
+    // Validación: solo ataques ortogonales (no diagonales) y dentro del rango
+    if (!((dif_f == 0 && dif_c > 0 && dif_c <= rango) ||
+          (dif_c == 0 && dif_f > 0 && dif_f <= rango))) {
+        cout << "Solo se permiten ataques ortogonales dentro del rango!" << endl;
         return;
     }
 
@@ -193,6 +194,7 @@ void atacar_con_unidad(Contexto& ctx) {
 
         if (objetivo->obtener_propietario() == "J1") {
             cout << "No puedes atacar tus propias unidades!" << endl;
+            // Restaurar/ajustar puntos de acción: como el jugador ya consumió uno, mantenemos la lógica previa
             ctx.reiniciar_puntos_accion();
             ctx.consumir_punto_accion();
             return;
@@ -200,23 +202,24 @@ void atacar_con_unidad(Contexto& ctx) {
 
         int dano_base = atacante->calcular_dano_ataque();
 
-        // Aplicar mejoras si están desbloqueadas
+        // Aplicar mejoras de ataque si están desbloqueadas
         if (ctx.tiene_mejora_ataque()) {
             dano_base += 5;
         }
 
+        // Bono de defensa del terreno y defensa base del objetivo
         int bono_def = celda_objetivo.obtener_terreno()->bono_defensa(*objetivo);
-        int def_objetivo = objetivo->calcular_defensa();
-
+        int def_base = objetivo->calcular_defensa();
         if (ctx.tiene_mejora_defensa()) {
-            def_objetivo += 3;
+            def_base += 3;
         }
+        int defensa_total = def_base + bono_def;
 
         int moral = ctx.obtener_jugador().obtener_moral();
         double factor_moral = 0.5 + (moral / 200.0);
 
-        int dano_con_moral = dano_base * factor_moral;
-        int dano_final = max(1, dano_con_moral - bono_def);
+        int dano_con_moral = static_cast<int>(dano_base * factor_moral + 0.0001);
+        int dano_final = max(1, dano_con_moral - defensa_total);
 
         objetivo->recibir_dano(dano_final);
 
@@ -224,7 +227,7 @@ void atacar_con_unidad(Contexto& ctx) {
                        objetivo->obtener_codigo() + " causando " + to_string(dano_final) +
                        " de dano (Base: " + to_string(dano_base) +
                        " | Moral: x" + to_string(factor_moral) +
-                       " | Def terreno: -" + to_string(bono_def) + ")");
+                       " | Def total: -" + to_string(defensa_total) + ")");
 
         if (!objetivo->esta_activa()) {
             celda_objetivo.eliminar_unidad();
@@ -245,6 +248,7 @@ void atacar_con_unidad(Contexto& ctx) {
             return;
         }
 
+        // Actualmente los edificios se destruyen inmediatamente; si implementas HP, cambiar aquí.
         celda_objetivo.eliminar_edificio();
         ctx.agregar_puntaje(25);
         ctx.agregar_log("Edificio enemigo destruido! +25 puntos");
@@ -687,10 +691,12 @@ void producir_recursos(Contexto& ctx) {
                     edificio->efecto_turno(ctx.obtener_sistema());
                 }
             }
-			}
+        }
+    }
+
+    ctx.agregar_log("Recursos producidos este turno");
 }
-ctx.agregar_log("Recursos producidos este turno");
-}
+
 void mantenimiento_unidades(Contexto& ctx) {
 Mapa& mapa = ctx.obtener_mapa();
 int unidades_jugador = 0;
