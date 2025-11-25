@@ -754,15 +754,12 @@ for (int f = 0; f < mapa.obtener_filas(); f++) {
 }
 }
 void procesar_eventos_turno(Contexto& ctx) {
-// Procesar eventos programados
 ctx.procesar_eventos();
-// Aplicar rutinas de controladores si hay eventos activos
-// (esto simula la reacción de los controladores a los eventos)
 }
 int main() {
 Contexto ctx;
 ctx.inicializar_escenario();
-cout << "\nBienvenido a RIVAL FRONTIERS!" << endl;
+cout << "\n¡Bienvenido a RIVAL FRONTIERS!" << endl;
 pausar();
 
 bool jugando = true;
@@ -840,26 +837,26 @@ while (jugando) {
             ctx.limpiar_bitacora();
 
             if (ctx.verificar_victoria()) {
-                cout << "\nVICTORIA! Has alcanzado el dominio objetivo." << endl;
+                cout << "\n¡VICTORIA! Has alcanzado el dominio objetivo." << endl;
                 cout << "Puntaje final: " << ctx.obtener_puntaje() << endl;
                 jugando = false;
             }
 
             if (ctx.verificar_derrota()) {
-                cout << "\nDERROTA! El sistema te ha superado." << endl;
+                cout << "\n¡DERROTA! El sistema te ha superado." << endl;
                 jugando = false;
             }
             break;
         case 9:
             if (ctx.guardar_partida("partida.txt")) {
-                cout << "Partida guardada!" << endl;
+                cout << "¡Partida guardada!" << endl;
             } else {
                 cout << "Error al guardar la partida" << endl;
             }
             break;
         case 10:
             if (ctx.cargar_partida("partida.txt")) {
-                cout << "Partida cargada!" << endl;
+                cout << "¡Partida cargada!" << endl;
             } else {
                 cout << "No hay partida guardada o error al cargar" << endl;
             }
@@ -874,7 +871,7 @@ while (jugando) {
             construccion_rapida_ingeniero(ctx);
             break;
         case 14:
-            cout << "Gracias por jugar!" << endl;
+            cout << "¡Gracias por jugar!" << endl;
             jugando = false;
             break;
         default:
@@ -893,8 +890,8 @@ while (jugando) {
 if (!jugando) {
     ctx.generar_reporte_final("reporte_final.txt");
     cout << "\nReporte final guardado en 'reporte_final.txt'" << endl;
-    cout << "\nRegistro guardado en partida_completa.log" << endl;
-    cout << "\nRevisión para carga en partida.txt" << endl;
+    cout << "\nRegistro guardado en 'partida_completa.log'" << endl;
+    cout << "\nRevisión para carga en 'partida.txt'" << endl;
 }
 
 return 0;
