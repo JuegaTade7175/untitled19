@@ -260,7 +260,7 @@ bool Contexto::guardar_partida(const string& archivo) {
          << jugador.obtener_recursos().energia << "\n";
 
     file << "Moral: " << jugador.obtener_moral() << "\n";
-    file << "CumplidaMisión: " << mision_cumplida << "\n";
+    file << "Completada: " << mision_cumplida << "\n";
 
     return true;
 }
