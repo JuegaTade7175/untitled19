@@ -890,6 +890,8 @@ while (jugando) {
             ctx.verificar_captura_neutrales();
             procesar_eventos_turno(ctx);
 
+            verificar_misiones_secundarias(ctx);
+
             ctrl_sistema.resolver_fase(ctx);
 
             ctx.incrementar_turno();
