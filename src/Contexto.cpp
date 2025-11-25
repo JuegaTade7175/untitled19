@@ -245,9 +245,7 @@ void Contexto::mostrar_panel_superior() const {
     cout << "════════════════════════════════════════════════════════════\n";
 }
 
-
 bool Contexto::guardar_partida(const string& archivo) {
-
     ofstream file(archivo);
     if (!file.is_open()) return false;
 
@@ -262,11 +260,41 @@ bool Contexto::guardar_partida(const string& archivo) {
     file << "Moral: " << jugador.obtener_moral() << "\n";
     file << "Completada: " << mision_cumplida << "\n";
 
+    file << "Ingenieros: ";
+    int ingenieros_guardados = 0;
+
+    for (int f = 0; f < mapa.obtener_filas(); f++) {
+        for (int c = 0; c < mapa.obtener_columnas(); c++) {
+            Coordenada pos(f, c);
+            Celda& celda = mapa.obtener_celda(pos);
+
+            if (celda.tiene_unidad()) {
+                auto unidad = celda.obtener_unidad();
+
+                if (unidad->obtener_tipo() == "I" &&
+                    unidad->obtener_propietario() == "J1") {
+
+                    auto ingeniero = dynamic_pointer_cast<Ingeniero>(unidad);
+
+                    if (ingeniero && ingeniero->tiene_construccion_pendiente()) {
+                        file << f << " " << c << " "
+                             << ingeniero->obtener_tipo_construccion() << " ";
+                        ingenieros_guardados++;
+                    }
+                    }
+            }
+        }
+    }
+
+    if (ingenieros_guardados == 0) {
+        file << "NINGUNO";
+    }
+    file << "\n";
+
     return true;
 }
 
 bool Contexto::cargar_partida(const string& archivo) {
-
     ifstream file(archivo);
     if (!file.is_open()) return false;
 
@@ -284,8 +312,39 @@ bool Contexto::cargar_partida(const string& archivo) {
     jugador.establecer_recursos(Recursos(comida, metal, energia));
     jugador.establecer_moral(moral);
 
-    agregar_log("Partida cargada desde " + archivo);
+    file >> etiqueta;
 
+    string dato;
+    file >> dato;
+
+    if (dato != "NINGUNO") {
+        int f = stoi(dato);
+        int c;
+        string tipo_construccion;
+
+        while (file >> c >> tipo_construccion) {
+            Coordenada pos(f, c);
+
+            if (mapa.es_valida(pos)) {
+                Celda& celda = mapa.obtener_celda(pos);
+
+                if (celda.tiene_unidad()) {
+                    auto unidad = celda.obtener_unidad();
+                    auto ingeniero = dynamic_pointer_cast<Ingeniero>(unidad);
+
+                    if (ingeniero) {
+                        ingeniero->establecer_construccion(tipo_construccion);
+                        agregar_log("Construcción pendiente restaurada para Ingeniero en (" +
+                                   to_string(f) + "," + to_string(c) + ")");
+                    }
+                }
+            }
+
+            if (!(file >> f)) break;
+        }
+    }
+
+    agregar_log("Partida cargada desde " + archivo);
     return true;
 }
 

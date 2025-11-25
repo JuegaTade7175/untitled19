@@ -20,11 +20,15 @@ protected:
     bool activa;
     int rango_ataque;
     Coordenada posicion;
+    bool habilidad_activa;
+    int bonus_temporal_ataque;
+    int bonus_temporal_defensa;
 
 public:
     Unidad(const std::string& t, const std::string& prop, int v, int atq, int def, int rango = 1)
         : tipo(t), propietario(prop), vida(v), ataque(atq), defensa(def),
-          activa(true), rango_ataque(rango), posicion(0, 0) {}
+          activa(true), rango_ataque(rango), posicion(0, 0),
+          habilidad_activa(false), bonus_temporal_ataque(0), bonus_temporal_defensa(0) {}
 
     virtual ~Unidad() {}
 
@@ -55,8 +59,19 @@ public:
     void desactivar() { activa = false; }
     void activar() { activa = true; }
 
-    int calcular_dano_ataque() const { return ataque; }
-    int calcular_defensa() const { return defensa; }
+    void resetear_habilidad() {
+        habilidad_activa = false;
+        bonus_temporal_ataque = 0;
+        bonus_temporal_defensa = 0;
+    }
+
+    int calcular_dano_ataque() const {
+        return ataque + bonus_temporal_ataque;
+    }
+
+    int calcular_defensa() const {
+        return defensa + bonus_temporal_defensa;
+    }
 
     friend std::ostream& operator<<(std::ostream& os, const Unidad& u) {
         os << u.obtener_codigo() << "(V:" << u.vida << ")";

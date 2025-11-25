@@ -24,10 +24,16 @@ void Soldado::atacar(Unidad& objetivo, Contexto& ctx) {
 }
 
 void Soldado::habilidad_especial(Contexto& ctx) {
+    if (habilidad_activa) {
+        ctx.agregar_log("Defensa mejorada ya activa para este Soldado");
+        return;
+    }
+
     if (ctx.obtener_jugador().puede_pagar(Recursos(0, 0, 1))) {
         ctx.obtener_jugador().consumir_recursos(Recursos(0, 0, 1));
-        defensa += 5;
-        ctx.agregar_log("Soldado activó defensa mejorada (+5 DEF)");
+        bonus_temporal_defensa = 5;
+        habilidad_activa = true;
+        ctx.agregar_log("Soldado activó defensa mejorada (+5 DEF temporal)");
     } else {
         ctx.agregar_log("Sin energía para activar habilidad");
     }
@@ -50,10 +56,16 @@ void Arquero::atacar(Unidad& objetivo, Contexto& ctx) {
 }
 
 void Arquero::habilidad_especial(Contexto& ctx) {
+    if (habilidad_activa) {
+        ctx.agregar_log("Flecha potenciada ya activa para este Arquero");
+        return;
+    }
+
     if (ctx.obtener_jugador().puede_pagar(Recursos(0, 0, 1))) {
         ctx.obtener_jugador().consumir_recursos(Recursos(0, 0, 1));
-        ataque += 10; 
-        ctx.agregar_log("Arquero disparó flecha potenciada (+10 ATK)");
+        bonus_temporal_ataque = 10;
+        habilidad_activa = true;
+        ctx.agregar_log("Arquero disparó flecha potenciada (+10 ATK temporal)");
     } else {
         ctx.agregar_log("Sin energía para habilidad especial");
     }
@@ -76,16 +88,29 @@ void Caballero::atacar(Unidad& objetivo, Contexto& ctx) {
 }
 
 void Caballero::habilidad_especial(Contexto& ctx) {
+    if (habilidad_activa) {
+        ctx.agregar_log("Carga devastadora ya activa para este Caballero");
+        return;
+    }
+
     if (ctx.obtener_jugador().puede_pagar(Recursos(0, 0, 1))) {
         ctx.obtener_jugador().consumir_recursos(Recursos(0, 0, 1));
-        ataque += 15;
-        ctx.agregar_log("Caballero ejecutó carga devastadora (+15 ATK)");
+        bonus_temporal_ataque = 15;
+        habilidad_activa = true;
+        ctx.agregar_log("Caballero ejecutó carga devastadora (+15 ATK temporal)");
     } else {
         ctx.agregar_log("Sin energía para carga");
     }
 }
 
 bool Mago::mover(const Coordenada& destino, Contexto& ctx) {
+    Celda& celda_destino = ctx.obtener_mapa().obtener_celda(destino);
+    int costo = celda_destino.obtener_terreno()->costo_movimiento(*this);
+
+    if (costo >= 99) {
+        return false;
+    }
+
     return true;
 }
 

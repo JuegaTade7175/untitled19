@@ -194,7 +194,6 @@ void atacar_con_unidad(Contexto& ctx) {
 
         if (objetivo->obtener_propietario() == "J1") {
             cout << "No puedes atacar tus propias unidades!" << endl;
-            // Restaurar/ajustar puntos de acción: como el jugador ya consumió uno, mantenemos la lógica previa
             ctx.reiniciar_puntos_accion();
             ctx.consumir_punto_accion();
             return;
@@ -202,17 +201,17 @@ void atacar_con_unidad(Contexto& ctx) {
 
         int dano_base = atacante->calcular_dano_ataque();
 
-        // Aplicar mejoras de ataque si están desbloqueadas
         if (ctx.tiene_mejora_ataque()) {
             dano_base += 5;
         }
 
-        // Bono de defensa del terreno y defensa base del objetivo
-        int bono_def = celda_objetivo.obtener_terreno()->bono_defensa(*objetivo);
         int def_base = objetivo->calcular_defensa();
+        int bono_def = celda_objetivo.obtener_terreno()->bono_defensa(*objetivo);
+
         if (ctx.tiene_mejora_defensa()) {
             def_base += 3;
         }
+
         int defensa_total = def_base + bono_def;
 
         int moral = ctx.obtener_jugador().obtener_moral();
@@ -248,7 +247,6 @@ void atacar_con_unidad(Contexto& ctx) {
             return;
         }
 
-        // Actualmente los edificios se destruyen inmediatamente; si implementas HP, cambiar aquí.
         celda_objetivo.eliminar_edificio();
         ctx.agregar_puntaje(25);
         ctx.agregar_log("Edificio enemigo destruido! +25 puntos");
@@ -762,6 +760,22 @@ for (int f = 0; f < mapa.obtener_filas(); f++) {
 void procesar_eventos_turno(Contexto& ctx) {
 ctx.procesar_eventos();
 }
+void resetear_habilidades_unidades(Contexto& ctx) {
+    Mapa& mapa = ctx.obtener_mapa();
+    for (int f = 0; f < mapa.obtener_filas(); f++) {
+        for (int c = 0; c < mapa.obtener_columnas(); c++) {
+            Coordenada pos(f, c);
+            Celda& celda = mapa.obtener_celda(pos);
+
+            if (celda.tiene_unidad()) {
+                auto u = celda.obtener_unidad();
+                if (u->obtener_propietario() == "J1") {
+                    u->resetear_habilidad();
+                }
+            }
+        }
+    }
+}
 int main() {
 Contexto ctx;
 ctx.inicializar_escenario();
@@ -826,6 +840,8 @@ while (jugando) {
             }
             log_file.close();
         }
+
+            resetear_habilidades_unidades(ctx);
 
             mantenimiento_unidades(ctx);
             producir_recursos(ctx);
