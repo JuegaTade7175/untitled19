@@ -291,17 +291,84 @@ bool Contexto::cargar_partida(const string& archivo) {
 
 void Contexto::generar_reporte_final(const string& archivo) {
 
+    int unidades_j1 = 0, unidades_j2 = 0;
+    int edificios_j1 = 0, edificios_j2 = 0;
+
+    for (int f = 0; f < mapa.obtener_filas(); f++) {
+        for (int c = 0; c < mapa.obtener_columnas(); c++) {
+            Coordenada pos(f, c);
+            Celda& celda = mapa.obtener_celda(pos);
+
+            if (celda.tiene_unidad()) {
+                if (celda.obtener_unidad()->obtener_propietario() == "J1") unidades_j1++;
+                else if (celda.obtener_unidad()->obtener_propietario() == "J2") unidades_j2++;
+            }
+
+            if (celda.tiene_edificio()) {
+                if (celda.obtener_edificio()->obtener_propietario() == "J1") edificios_j1++;
+                else if (celda.obtener_edificio()->obtener_propietario() == "J2") edificios_j2++;
+            }
+        }
+    }
+
     ofstream out(archivo);
 
-    out << "=================== RIVAL FRONTIERS - REPORTE FINAL ===================\n";
-    out << "Resultado: " << (verificar_victoria() ? "Victoria" : "Derrota") << "\n";
+    out << "═══════════════════════════════════════════════════════════════\n";
+    out << "           RIVAL FRONTIERS - REPORTE FINAL DE PARTIDA         \n";
+    out << "═══════════════════════════════════════════════════════════════\n\n";
+
+    bool victoria = verificar_victoria();
+    out << "RESULTADO: " << (victoria ? "✓ VICTORIA" : "✗ DERROTA") << "\n\n";
+
+    out << "--- INFORMACIÓN DE PARTIDA ---\n";
     out << "Turno final: " << turno_actual << "/" << turno_limite << "\n";
-    out << "Dominio jugador: " << calcular_dominio_jugador() << "%\n";
-    out << "Dominio sistema: " << calcular_dominio_sistema() << "%\n";
-    out << "Neutrales: " << calcular_neutrales() << "%\n";
-    out << "Recursos finales: " << jugador.obtener_recursos() << "\n";
-    out << "Moral final: " << jugador.obtener_moral() << "\n";
-    out << "Puntaje total: " << puntaje_jugador << "\n";
-    out << "Misión: " << (mision_cumplida ? "Completada" : "No completada") << "\n";
-    out << "Clima final: " << clima_actual << "\n";
+    out << "Misión: " << (mision_cumplida ? "✓ Completada" : "✗ No completada") << "\n";
+    out << "Clima final: " << clima_actual << "\n\n";
+
+    out << "--- CONTROL TERRITORIAL ---\n";
+    out << "Dominio Jugador (J1): " << calcular_dominio_jugador() << "%\n";
+    out << "Dominio Sistema (J2): " << calcular_dominio_sistema() << "%\n";
+    out << "Territorios neutrales: " << calcular_neutrales() << "%\n\n";
+
+    out << "--- RECURSOS Y MORAL ---\n";
+    out << "Recursos finales J1: " << jugador.obtener_recursos() << "\n";
+    out << "Moral final J1: " << jugador.obtener_moral() << "/100\n";
+    out << "Factor de moral: x" << fixed << setprecision(2)
+        << jugador.obtener_factor_moral() << "\n\n";
+
+    out << "--- FUERZAS MILITARES ---\n";
+    out << "Unidades J1: " << unidades_j1 << "\n";
+    out << "Unidades J2: " << unidades_j2 << "\n";
+    out << "Edificios J1: " << edificios_j1 << "\n";
+    out << "Edificios J2: " << edificios_j2 << "\n\n";
+
+    out << "--- PUNTAJE ---\n";
+    out << "Puntaje total: " << puntaje_jugador << " puntos\n\n";
+
+    out << "--- MEJORAS DESBLOQUEADAS ---\n";
+    out << "Mejora de ataque: " << (mejora_ataque_desbloqueada ? "✓ Sí" : "✗ No") << "\n";
+    out << "Mejora de defensa: " << (mejora_defensa_desbloqueada ? "✓ Sí" : "✗ No") << "\n\n";
+
+    out << "--- ANÁLISIS FINAL ---\n";
+    if (victoria) {
+        if (mision_cumplida) {
+            out << "Victoria por misión completada.\n";
+        } else if (calcular_dominio_jugador() >= objetivo_dominio) {
+            out << "Victoria por dominio territorial (" << calcular_dominio_jugador() << "% >= " << objetivo_dominio << "%).\n";
+        }
+    } else {
+        if (turno_actual >= turno_limite) {
+            out << "Derrota por límite de turnos alcanzado sin cumplir objetivos.\n";
+        } else if (jugador.obtener_recursos().comida < -10) {
+            out << "Derrota por colapso económico (comida: " << jugador.obtener_recursos().comida << ").\n";
+        } else if (calcular_dominio_sistema() >= 70) {
+            out << "Derrota por superioridad territorial enemiga (" << calcular_dominio_sistema() << "%).\n";
+        }
+    }
+
+    out << "\n═══════════════════════════════════════════════════════════════\n";
+    out << "               ¡Gracias por jugar RIVAL FRONTIERS!            \n";
+    out << "═══════════════════════════════════════════════════════════════\n";
+
+    out.close();
 }
