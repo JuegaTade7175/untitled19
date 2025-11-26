@@ -573,7 +573,6 @@ void construccion_rapida_ingeniero(Contexto& ctx) {
         return;
     }
 
-    // Cast a Ingeniero para acceder a métodos específicos
     auto ingeniero = dynamic_pointer_cast<Ingeniero>(unidad);
 
     if (!ingeniero) {
@@ -617,7 +616,6 @@ void construccion_rapida_ingeniero(Contexto& ctx) {
             return;
         }
 
-        // Crear el edificio según el tipo pendiente
         shared_ptr<Edificio> edificio;
         string tipo = ingeniero->obtener_tipo_construccion();
 
@@ -788,7 +786,6 @@ void resetear_habilidades_unidades(Contexto& ctx) {
         }
     }
 }
-// Check for secondary mission completion
 void verificar_misiones_secundarias(Contexto& ctx) {
     if (!ctx.tiene_mision_secundaria()) {
         ctx.generar_mision_aleatoria();
@@ -797,15 +794,12 @@ void verificar_misiones_secundarias(Contexto& ctx) {
 
     std::string mision_actual = ctx.obtener_mision_secundaria();
 
-    // Simple mission checking logic - expand based on mission types
     if (mision_actual.find("Defender") != std::string::npos) {
-        // Check if specified building is still under player control
         Celda& celda = ctx.obtener_mapa().obtener_celda(Coordenada(1, 3));
         if (celda.tiene_edificio() && celda.obtener_edificio()->obtener_propietario() == "J1") {
             ctx.completar_mision_secundaria("Defender");
         }
     }
-    // Add more mission type checks here
 }
 int main() {
 Contexto ctx;
