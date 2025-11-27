@@ -80,33 +80,33 @@ void mover_unidad(Contexto& ctx) {
     Coordenada destino(f_destino, c_destino);
 
     if (!ctx.obtener_mapa().es_valida(origen) || !ctx.obtener_mapa().es_valida(destino)) {
-        cout << "Coordenadas invalidas!" << endl;
+        cout << "¡Coordenadas invalidas!" << endl;
         return;
     }
 
     Celda& celda_origen = ctx.obtener_mapa().obtener_celda(origen);
 
     if (!celda_origen.tiene_unidad()) {
-        cout << "No hay unidad en la posicion de origen!" << endl;
+        cout << "¡No hay unidad en la posicion de origen!" << endl;
         return;
     }
 
     auto unidad = celda_origen.obtener_unidad();
 
     if (unidad->obtener_propietario() != "J1") {
-        cout << "No puedes mover unidades enemigas!" << endl;
+        cout << "¡No puedes mover unidades enemigas!" << endl;
         return;
     }
 
     if (!unidad->esta_activa()) {
-        cout << "Esa unidad esta inactiva y no puede moverse!" << endl;
+        cout << "¡Esa unidad esta inactiva y no puede moverse!" << endl;
         return;
     }
 
     Celda& celda_destino = ctx.obtener_mapa().obtener_celda(destino);
 
     if (celda_destino.tiene_unidad()) {
-        cout << "La casilla destino esta ocupada!" << endl;
+        cout << "¡La casilla destino esta ocupada!" << endl;
         return;
     }
 
@@ -114,12 +114,12 @@ void mover_unidad(Contexto& ctx) {
     int dif_c = abs(destino.columna - origen.columna);
 
     if (!((dif_f == 1 && dif_c == 0) || (dif_f == 0 && dif_c == 1))) {
-        cout << "Movimiento invalido! Solo se permite movimiento ortogonal adyacente." << endl;
+        cout << "¡Movimiento invalido! Solo se permite movimiento ortogonal adyacente." << endl;
         return;
     }
 
     if (!unidad->mover(destino, ctx)) {
-        cout << "La unidad no puede entrar en ese terreno!" << endl;
+        cout << "¡La unidad no puede entrar en ese terreno!" << endl;
         return;
     }
 
@@ -136,7 +136,7 @@ void mover_unidad(Contexto& ctx) {
                    to_string(origen.fila) + "," + to_string(origen.columna) +
                    " a " + to_string(destino.fila) + "," + to_string(destino.columna));
 
-    cout << "Unidad movida exitosamente!" << endl;
+    cout << "¡Unidad movida exitosamente!" << endl;
 }
 
 void atacar_con_unidad(Contexto& ctx) {
@@ -153,21 +153,21 @@ void atacar_con_unidad(Contexto& ctx) {
 
     if (!ctx.obtener_mapa().es_valida(pos_atacante) ||
         !ctx.obtener_mapa().es_valida(pos_objetivo)) {
-        cout << "Coordenadas invalidas!" << endl;
+        cout << "¡Coordenadas invalidas!" << endl;
         return;
     }
 
     Celda& celda_atacante = ctx.obtener_mapa().obtener_celda(pos_atacante);
 
     if (!celda_atacante.tiene_unidad()) {
-        cout << "No hay unidad en la posicion del atacante!" << endl;
+        cout << "¡No hay unidad en la posicion del atacante!" << endl;
         return;
     }
 
     auto atacante = celda_atacante.obtener_unidad();
 
     if (atacante->obtener_propietario() != "J1") {
-        cout << "No puedes atacar con unidades enemigas!" << endl;
+        cout << "¡No puedes atacar con unidades enemigas!" << endl;
         return;
     }
 
@@ -177,12 +177,12 @@ void atacar_con_unidad(Contexto& ctx) {
 
     if (!((dif_f == 0 && dif_c > 0 && dif_c <= rango) ||
           (dif_c == 0 && dif_f > 0 && dif_f <= rango))) {
-        cout << "Solo se permiten ataques ortogonales dentro del rango!" << endl;
+        cout << "¡Solo se permiten ataques ortogonales dentro del rango!" << endl;
         return;
     }
 
     if (!ctx.consumir_punto_accion()) {
-        cout << "No tienes puntos de accion suficientes!" << endl;
+        cout << "¡No tienes puntos de accion suficientes!" << endl;
         return;
     }
 
@@ -192,7 +192,7 @@ void atacar_con_unidad(Contexto& ctx) {
         auto objetivo = celda_objetivo.obtener_unidad();
 
         if (objetivo->obtener_propietario() == "J1") {
-            cout << "No puedes atacar tus propias unidades!" << endl;
+            cout << "¡No puedes atacar tus propias unidades!" << endl;
             ctx.reiniciar_puntos_accion();
             ctx.consumir_punto_accion();
             return;
@@ -238,8 +238,8 @@ void atacar_con_unidad(Contexto& ctx) {
         if (!objetivo->esta_activa()) {
             celda_objetivo.eliminar_unidad();
             ctx.agregar_puntaje(10);
-            ctx.agregar_log("Unidad enemiga eliminada! +10 puntos");
-            cout << "Enemigo eliminado! +10 puntos" << endl;
+            ctx.agregar_log("¡Unidad enemiga eliminada! +10 puntos");
+            cout << "¡Enemigo eliminado! +10 puntos" << endl;
         } else {
             cout << "Dano causado: " << dano_final
                  << " | Vida restante: " << objetivo->obtener_vida() << endl;
@@ -252,7 +252,7 @@ void atacar_con_unidad(Contexto& ctx) {
         auto edificio = celda_objetivo.obtener_edificio();
 
         if (edificio->obtener_propietario() == "J1") {
-            cout << "No puedes atacar tus propios edificios!" << endl;
+            cout << "¡No puedes atacar tus propios edificios!" << endl;
             ctx.reiniciar_puntos_accion();
             ctx.consumir_punto_accion();
             return;
@@ -260,13 +260,13 @@ void atacar_con_unidad(Contexto& ctx) {
 
         celda_objetivo.eliminar_edificio();
         ctx.agregar_puntaje(25);
-        ctx.agregar_log("Edificio enemigo destruido! +25 puntos");
-        cout << "Edificio enemigo destruido! +25 puntos" << endl;
+        ctx.agregar_log("¡Edificio enemigo destruido! +25 puntos");
+        cout << "¡Edificio enemigo destruido! +25 puntos" << endl;
 
         return;
     }
 
-    cout << "No hay objetivo valido en esa casilla!" << endl;
+    cout << "¡No hay objetivo valido en esa casilla!" << endl;
     ctx.reiniciar_puntos_accion();
     ctx.consumir_punto_accion();
 }
@@ -289,24 +289,24 @@ void construir_edificio(Contexto& ctx) {
     Coordenada pos(fila, columna);
 
     if (!ctx.obtener_mapa().es_valida(pos)) {
-        cout << "Coordenada invalida!" << endl;
+        cout << "¡Coordenada invalida!" << endl;
         return;
     }
 
     Celda& celda = ctx.obtener_mapa().obtener_celda(pos);
 
     if (celda.tiene_unidad()) {
-        cout << "Hay una unidad en esa casilla! Debes desocuparla primero." << endl;
+        cout << "¡Hay una unidad en esa casilla! Debes desocuparla primero." << endl;
         return;
     }
 
     if (celda.tiene_edificio()) {
-        cout << "Ya hay un edificio en esa casilla!" << endl;
+        cout << "¡Ya hay un edificio en esa casilla!" << endl;
         return;
     }
 
     if (celda.obtener_terreno()->obtener_codigo() == "AG") {
-        cout << "No se puede construir en agua!" << endl;
+        cout << "¡No se puede construir en agua!" << endl;
         return;
     }
 
@@ -331,17 +331,17 @@ void construir_edificio(Contexto& ctx) {
             edificio = make_shared<Forja>("J1");
             break;
         default:
-            cout << "Tipo invalido!" << endl;
+            cout << "¡Tipo invalido!" << endl;
             return;
     }
 
     if (!ctx.obtener_jugador().puede_pagar(costo)) {
-        cout << "No tienes recursos suficientes!" << endl;
+        cout << "¡No tienes recursos suficientes!" << endl;
         return;
     }
 
     if (!ctx.consumir_punto_accion()) {
-        cout << "No tienes puntos de accion suficientes!" << endl;
+        cout << "¡No tienes puntos de accion suficientes!" << endl;
         return;
     }
 
@@ -352,7 +352,7 @@ void construir_edificio(Contexto& ctx) {
     ctx.agregar_log("Edificio " + edificio->obtener_codigo() + " construido en " +
                    to_string(fila) + "," + to_string(columna));
 
-    cout << "Edificio construido exitosamente!" << endl;
+    cout << "¡Edificio construido exitosamente!" << endl;
 }
 
 void reclutar_unidad(Contexto& ctx) {
@@ -374,24 +374,24 @@ void reclutar_unidad(Contexto& ctx) {
     Coordenada pos(fila, columna);
 
     if (!ctx.obtener_mapa().es_valida(pos)) {
-        cout << "Coordenada invalida!" << endl;
+        cout << "¡Coordenada invalida!" << endl;
         return;
     }
 
     Celda& celda = ctx.obtener_mapa().obtener_celda(pos);
 
     if (!celda.tiene_edificio() || celda.obtener_edificio()->obtener_tipo() != "Cu") {
-        cout << "Debe haber un cuartel en esa posicion!" << endl;
+        cout << "¡Debe haber un cuartel en esa posicion!" << endl;
         return;
     }
 
     if (celda.obtener_edificio()->obtener_propietario() != "J1") {
-        cout << "Ese cuartel no es tuyo!" << endl;
+        cout << "¡Ese cuartel no es tuyo!" << endl;
         return;
     }
 
     if (celda.tiene_unidad()) {
-        cout << "La casilla ya tiene una unidad!" << endl;
+        cout << "¡La casilla ya tiene una unidad!" << endl;
         return;
     }
 
@@ -425,12 +425,12 @@ void reclutar_unidad(Contexto& ctx) {
     }
 
     if (!ctx.obtener_jugador().puede_pagar(costo)) {
-        cout << "No tienes recursos suficientes!" << endl;
+        cout << "¡No tienes recursos suficientes!" << endl;
         return;
     }
 
     if (!ctx.consumir_punto_accion()) {
-        cout << "No tienes puntos de accion suficientes!" << endl;
+        cout << "¡No tienes puntos de accion suficientes!" << endl;
         return;
     }
 
@@ -441,7 +441,7 @@ void reclutar_unidad(Contexto& ctx) {
     ctx.agregar_log("Unidad " + unidad->obtener_codigo() + " reclutada en " +
                    to_string(fila) + "," + to_string(columna));
 
-    cout << "Unidad reclutada exitosamente!" << endl;
+    cout << "¡Unidad reclutada exitosamente!" << endl;
 }
 
 void usar_habilidad(Contexto& ctx) {
@@ -454,31 +454,31 @@ void usar_habilidad(Contexto& ctx) {
     Coordenada pos(f, c);
 
     if (!ctx.obtener_mapa().es_valida(pos)) {
-        cout << "Coordenada invalida!" << endl;
+        cout << "¡Coordenada invalida!" << endl;
         return;
     }
 
     Celda& celda = ctx.obtener_mapa().obtener_celda(pos);
 
     if (!celda.tiene_unidad()) {
-        cout << "No hay unidad en esa posicion!" << endl;
+        cout << "¡No hay unidad en esa posicion!" << endl;
         return;
     }
 
     auto unidad = celda.obtener_unidad();
 
     if (unidad->obtener_propietario() != "J1") {
-        cout << "No es tu unidad!" << endl;
+        cout << "¡No es tu unidad!" << endl;
         return;
     }
 
     if (!ctx.consumir_punto_accion()) {
-        cout << "No tienes puntos de accion suficientes!" << endl;
+        cout << "¡No tienes puntos de accion suficientes!" << endl;
         return;
     }
 
     unidad->habilidad_especial(ctx);
-    cout << "Habilidad especial activada!" << endl;
+    cout << "¡Habilidad especial activada!" << endl;
 }
 
 void desbloquear_mejoras(Contexto& ctx) {
@@ -492,50 +492,50 @@ void desbloquear_mejoras(Contexto& ctx) {
 
     if (opcion == 1) {
         if (ctx.tiene_mejora_ataque()) {
-            cout << "Ya tienes esta mejora desbloqueada!" << endl;
+            cout << "¡Ya tienes esta mejora desbloqueada!" << endl;
             return;
         }
 
         Recursos costo(0, 5, 3);
         if (!ctx.obtener_jugador().puede_pagar(costo)) {
-            cout << "No tienes recursos suficientes!" << endl;
+            cout << "¡No tienes recursos suficientes!" << endl;
             return;
         }
 
         if (!ctx.consumir_punto_accion()) {
-            cout << "No tienes puntos de accion suficientes!" << endl;
+            cout << "¡No tienes puntos de accion suficientes!" << endl;
             return;
         }
 
         ctx.obtener_jugador().consumir_recursos(costo);
         ctx.desbloquear_mejora_ataque();
-        ctx.agregar_log("Mejora de ataque desbloqueada! Todas las unidades ganan +5 ATK");
-        cout << "Mejora de ataque desbloqueada!" << endl;
+        ctx.agregar_log("¡Mejora de ataque desbloqueada! Todas las unidades ganan +5 ATK");
+        cout << "¡Mejora de ataque desbloqueada!" << endl;
 
     } else if (opcion == 2) {
         if (ctx.tiene_mejora_defensa()) {
-            cout << "Ya tienes esta mejora desbloqueada!" << endl;
+            cout << "¡Ya tienes esta mejora desbloqueada!" << endl;
             return;
         }
 
         Recursos costo(0, 4, 2);
         if (!ctx.obtener_jugador().puede_pagar(costo)) {
-            cout << "No tienes recursos suficientes!" << endl;
+            cout << "¡No tienes recursos suficientes!" << endl;
             return;
         }
 
         if (!ctx.consumir_punto_accion()) {
-            cout << "No tienes puntos de accion suficientes!" << endl;
+            cout << "¡No tienes puntos de accion suficientes!" << endl;
             return;
         }
 
         ctx.obtener_jugador().consumir_recursos(costo);
         ctx.desbloquear_mejora_defensa();
         ctx.agregar_log("Mejora de defensa desbloqueada! Todas las unidades ganan +3 DEF");
-        cout << "Mejora de defensa desbloqueada!" << endl;
+        cout << "¡Mejora de defensa desbloqueada!" << endl;
 
     } else {
-        cout << "Opcion invalida!" << endl;
+        cout << "¡Opcion invalida!" << endl;
     }
 }
 
@@ -550,33 +550,33 @@ void construccion_rapida_ingeniero(Contexto& ctx) {
     Coordenada pos_ingeniero(f, c);
 
     if (!ctx.obtener_mapa().es_valida(pos_ingeniero)) {
-        cout << "Coordenada invalida!" << endl;
+        cout << "¡Coordenada invalida!" << endl;
         return;
     }
 
     Celda& celda_ingeniero = ctx.obtener_mapa().obtener_celda(pos_ingeniero);
 
     if (!celda_ingeniero.tiene_unidad()) {
-        cout << "No hay unidad en esa posicion!" << endl;
+        cout << "¡No hay unidad en esa posicion!" << endl;
         return;
     }
 
     auto unidad = celda_ingeniero.obtener_unidad();
 
     if (unidad->obtener_propietario() != "J1") {
-        cout << "No es tu unidad!" << endl;
+        cout << "¡No es tu unidad!" << endl;
         return;
     }
 
     if (unidad->obtener_tipo() != "I") {
-        cout << "Esta unidad no es un ingeniero!" << endl;
+        cout << "¡Esta unidad no es un ingeniero!" << endl;
         return;
     }
 
     auto ingeniero = dynamic_pointer_cast<Ingeniero>(unidad);
 
     if (!ingeniero) {
-        cout << "Error al obtener el ingeniero!" << endl;
+        cout << "¡Error al obtener el ingeniero!" << endl;
         return;
     }
 
@@ -590,29 +590,29 @@ void construccion_rapida_ingeniero(Contexto& ctx) {
         Coordenada pos_construccion(f, c);
 
         if (!ctx.obtener_mapa().es_valida(pos_construccion)) {
-            cout << "Coordenada invalida!" << endl;
+            cout << "¡Coordenada invalida!" << endl;
             return;
         }
 
         Celda& celda_construccion = ctx.obtener_mapa().obtener_celda(pos_construccion);
 
         if (celda_construccion.tiene_edificio()) {
-            cout << "Ya hay un edificio en esa posicion!" << endl;
+            cout << "¡Ya hay un edificio en esa posicion!" << endl;
             return;
         }
 
         if (celda_construccion.tiene_unidad()) {
-            cout << "Hay una unidad ocupando esa posicion!" << endl;
+            cout << "¡Hay una unidad ocupando esa posicion!" << endl;
             return;
         }
 
         if (celda_construccion.obtener_terreno()->obtener_codigo() == "AG") {
-            cout << "No se puede construir en agua!" << endl;
+            cout << "¡No se puede construir en agua!" << endl;
             return;
         }
 
         if (!ctx.consumir_punto_accion()) {
-            cout << "No tienes puntos de accion suficientes!" << endl;
+            cout << "¡No tienes puntos de accion suficientes!" << endl;
             return;
         }
 
@@ -637,7 +637,7 @@ void construccion_rapida_ingeniero(Contexto& ctx) {
             ctx.agregar_log("Ingeniero completo construccion rapida de " +
                           edificio->obtener_codigo() + " en (" +
                           to_string(f) + "," + to_string(c) + ")");
-            cout << "Construccion rapida completada!" << endl;
+            cout << "¡Construccion rapida completada!" << endl;
         }
 
     } else {
@@ -659,18 +659,18 @@ void construccion_rapida_ingeniero(Contexto& ctx) {
             case 3: tipo_codigo = "Cu"; break;
             case 4: tipo_codigo = "Fo"; break;
             default:
-                cout << "Tipo invalido!" << endl;
+                cout << "¡Tipo invalido!" << endl;
                 return;
         }
 
         Recursos costo(1, 0, 1);
         if (!ctx.obtener_jugador().puede_pagar(costo)) {
-            cout << "No tienes recursos suficientes! (Costo: 1 comida, 1 energia)" << endl;
+            cout << "¡No tienes recursos suficientes! (Costo: 1 comida, 1 energia)" << endl;
             return;
         }
 
         if (!ctx.consumir_punto_accion()) {
-            cout << "No tienes puntos de accion suficientes!" << endl;
+            cout << "¡No tienes puntos de accion suficientes!" << endl;
             return;
         }
 
@@ -678,7 +678,7 @@ void construccion_rapida_ingeniero(Contexto& ctx) {
         ingeniero->establecer_construccion(tipo_codigo);
 
         ctx.agregar_log("Ingeniero preparo construccion rapida de tipo " + tipo_codigo);
-        cout << "Construccion preparada! En el proximo turno podras colocarla." << endl;
+        cout << "¡Construccion preparada! En el proximo turno podras colocarla." << endl;
     }
 }
 
